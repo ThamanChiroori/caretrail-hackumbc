@@ -2,128 +2,413 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#185c50">
-  <title>CareTrail</title>
-  <link rel="stylesheet" href="styles.css">
-  <script type="module" src="app.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f5e4b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>CareTrail — notes between appointments</title>
+  <link rel="stylesheet" href="styles.css?v=e302249">
+  <link rel="stylesheet" href="report.css?v=e302249">
+  <script type="module" src="app.js?v=e302249"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="app-header">
-    <h1>CareTrail</h1>
-    <p>Your notes between appointments</p>
-  </header>
-  <main id="main">
-    <aside class="notice" aria-label="Prototype information">
-      <strong>Hackathon prototype — fictional data only.</strong>
-      <p>When storage is connected, records will stay in this browser on this device. Browser data can be cleared or lost and does not sync across devices.</p>
-    </aside>
-    <nav aria-label="Main navigation">
-      <a href="#events" aria-current="page">Events</a>
-      <a href="#medications">Medications</a>
-      <a href="#profile">Profile</a>
-      <a href="#report">Visit report</a>
-    </nav>
-    <p id="app-status" role="status" aria-live="polite">Shell preview: saving, photos, and reports are not connected yet.</p>
 
-    <section id="events" aria-labelledby="events-heading" data-screen>
-      <h2 id="events-heading" tabindex="-1">Events</h2>
-      <button type="button" id="add-event" data-focus="event-type">Add event</button>
-      <form id="event-form">
-        <h3>Event details</h3>
+  <header class="app-header">
+    <div class="brand-row">
+      <h1><a class="brand" href="#events-view" aria-label="CareTrail, events">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 13 8 13 10 19 14 6 16 13 21 13"></polyline></svg>
+        </span>
+        CareTrail
+      </a></h1>
+      <span class="prototype-tag">Prototype</span>
+    </div>
+    <p id="app-status" class="message" role="status" aria-live="polite" aria-atomic="true">Interface preview. Saving, photo handling, and reports are not connected yet. Entries are not saved.</p>
+  </header>
+
+  <main id="main">
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <a href="#events-view" aria-current="page">
+        <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+        <span class="nav-label">Events</span>
+      </a>
+      <a href="#medications-view">
+        <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="7" rx="3.5" transform="rotate(-35 12 13)"></rect><path d="M8.7 15.8 15.3 9.2" stroke-width="1.6"></path></svg></span>
+        <span class="nav-label">Medications</span>
+      </a>
+      <a href="#report-view">
+        <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10M12 20V4M19 20v-7"></path></svg></span>
+        <span class="nav-label">Report</span>
+      </a>
+      <a href="#profile-view">
+        <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"></path></svg></span>
+        <span class="nav-label">Profile</span>
+      </a>
+    </nav>
+
+    <section id="events-view" class="view" aria-labelledby="events-heading" data-screen>
+      <header class="section-header">
+        <h2 id="events-heading" tabindex="-1">Events</h2>
+        <p>Things you've recorded since your last appointment</p>
+      </header>
+      <button type="button" id="add-event" class="primary add-button" data-focus="event-type"><span aria-hidden="true">＋</span> Add event</button>
+      <div class="list-heading"><h3 class="eyebrow">Recent</h3></div>
+      <div id="timeline-list" class="card-list" aria-label="Recorded events">
+        <div class="empty-state">
+          <span class="empty-icon" aria-hidden="true">＋</span>
+          <h4>No events yet</h4>
+          <p>Start with what you remember. Details and the time it happened can be added later.</p>
+          <p class="small">An event with only its recorded time is valid. Saved events appear here as large, editable cards in chronological order.</p>
+        </div>
+      </div>
+      <form id="event-form" aria-labelledby="event-form-heading">
+        <div class="sheet-header">
+          <button type="button" id="cancel-event" class="secondary text-button">Cancel</button>
+          <h3 id="event-form-heading">Event details</h3>
+          <span class="sheet-header-spacer" aria-hidden="true"></span>
+        </div>
+        <p class="help">Only a recorded time is needed. All other details are optional.</p>
         <input type="hidden" name="id">
         <label for="event-type">Event type</label>
         <select id="event-type" name="type">
-          <option value="other">Other</option>
           <option value="symptom">Symptom</option>
           <option value="injury">Injury</option>
           <option value="possible_reaction">Possible reaction</option>
           <option value="consultation">Consultation</option>
           <option value="medication_taken">Medication taken</option>
+          <option value="other">Other</option>
         </select>
-        <label for="event-description">Description (optional)</label>
-        <textarea id="event-description" name="description" rows="3"></textarea>
-        <label for="event-occurred-at">When it happened (optional)</label>
+        <label for="event-description">Description <span>(optional)</span></label>
+        <textarea id="event-description" name="description" rows="4" placeholder="What would you like to remember?" enterkeyhint="done" autocomplete="off"></textarea>
+        <label for="event-occurred-at">When it happened <span>(optional)</span></label>
         <input id="event-occurred-at" name="occurredAt" type="datetime-local" aria-describedby="event-time-help">
-        <p id="event-time-help">Leave blank if unknown. Recorded at will be set automatically when first saved and will stay unchanged when edited.</p>
-        <label for="event-medication">Linked medication (optional)</label>
-        <select id="event-medication" name="medicationId"><option value="">None</option></select>
-        <label for="event-dose">Dose note (optional, for medication taken)</label>
-        <input id="event-dose" name="doseNote" type="text">
-        <button type="submit" disabled>Save event — coming soon</button>
+        <button type="button" class="calendar-trigger" data-calendar-trigger="event-occurred-at" aria-controls="calendar-event-occurred-at" aria-expanded="false">
+          <span>Choose happened date</span><span class="calendar-trigger-icon" aria-hidden="true">▾</span>
+        </button>
+        <div id="calendar-event-occurred-at" class="calendar-popover" data-calendar-for="event-occurred-at" role="dialog" aria-label="Choose event happened date" hidden data-calendar-template="calendar-popover-template"></div>
+        <p id="event-time-help" class="help">Leave blank if unknown. The timeline uses the recorded time when no happened-at time is entered.</p>
+        <div class="recorded-time">
+          <strong>Recorded at</strong>
+          <output id="event-recorded-at" aria-label="Recorded at">Set automatically on first save. This time stays unchanged when you edit.</output>
+        </div>
+        <label for="event-medication">Linked medication <span>(optional)</span></label>
+        <select id="event-medication" name="medicationId">
+          <option value="">None</option>
+        </select>
+        <label for="event-dose">Dose note <span>(optional, for medication taken)</span></label>
+        <input id="event-dose" name="doseNote" type="text" autocomplete="off" enterkeyhint="done">
+        <p class="help">A link records your note; it does not establish a cause.</p>
+        <p id="event-message" class="form-message" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div class="actions"><button id="save-event" type="submit" class="primary">Save event</button></div>
       </form>
-      <h3>Previous events</h3>
-      <div id="timeline-list"><p>Events will appear here once storage is connected.</p></div>
     </section>
 
-    <section id="medications" aria-labelledby="medications-heading" data-screen>
-      <h2 id="medications-heading" tabindex="-1">Medications</h2>
-      <button type="button" id="add-medication" data-focus="medication-photo">Add medication</button>
-      <p>Record a medication course here. To record an individual dose, add a “medication taken” event.</p>
-      <form id="medication-form">
-        <h3>Medication details</h3>
+    <section id="medications-view" class="view" aria-labelledby="medications-heading" data-screen>
+      <header class="section-header">
+        <h2 id="medications-heading" tabindex="-1">Medications</h2>
+        <p>Keep your medication labels and course details together.</p>
+      </header>
+      <button type="button" id="add-medication" class="primary add-button" data-focus="medication-camera"><span aria-hidden="true">＋</span> Add medication</button>
+      <p class="help course-help">This records a medication course. For an individual dose, add a “medication taken” event.</p>
+
+      <section id="ongoing-medications-group" class="medication-group" aria-labelledby="ongoing-heading">
+        <div class="list-heading">
+          <h3 id="ongoing-heading" class="eyebrow">Ongoing</h3>
+          <span>Current courses</span>
+        </div>
+        <div id="medication-list" class="card-list" aria-label="Ongoing medications">
+          <div class="empty-state">
+            <h4>No ongoing medications</h4>
+            <p>Add a label photo to get started. If the bottle is unavailable, you can add the photo later.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="medication-group completed-group" aria-labelledby="completed-heading">
+        <div class="list-heading">
+          <h3 id="completed-heading" class="eyebrow">Completed / stopped</h3>
+          <span>Kept for your visit</span>
+        </div>
+        <div id="completed-medications" class="card-list" aria-label="Completed medications">
+          <div class="empty-state compact">
+            <p>No completed courses yet. Finished or stopped courses will remain here until you start a new visit record.</p>
+          </div>
+        </div>
+      </section>
+
+      <form id="medication-form" aria-labelledby="medication-form-heading">
+        <div class="sheet-header">
+          <button type="button" id="cancel-medication" class="secondary text-button">Cancel</button>
+          <h3 id="medication-form-heading">Medication details</h3>
+          <span class="sheet-header-spacer" aria-hidden="true"></span>
+        </div>
         <input type="hidden" name="id">
         <input type="hidden" name="photoId">
-        <label for="medication-photo">Take or choose a label photo</label>
-        <p id="photo-help">Try to include the medication name on the label. Check that it is readable before saving.</p>
-        <input id="medication-photo" name="photo" type="file" accept="image/*" aria-describedby="photo-help" disabled>
-        <div id="photo-preview" aria-live="polite"><p>Photo preview will appear here when photo handling is connected.</p></div>
-        <div class="actions">
-          <button type="button" id="retake-photo" disabled>Retake photo</button>
-          <button type="button" id="add-photo-later" disabled>Add photo later</button>
-        </div>
-        <label for="medication-name">Name or familiar nickname (optional)</label>
-        <input id="medication-name" name="name" type="text">
-        <label for="medication-dose">Dose details (optional)</label>
-        <input id="medication-dose" name="doseText" type="text">
-        <button type="button" id="starting-today" disabled>Starting today</button>
-        <label for="medication-start">Choose another start date (optional)</label>
-        <input id="medication-start" name="startedAt" type="date" aria-describedby="start-help">
-        <p id="start-help">Leave blank for “Date not entered.”</p>
-        <label for="medication-status">Status</label>
-        <select id="medication-status" name="status"><option value="ongoing">Ongoing</option><option value="completed">Completed</option></select>
-        <label for="medication-completion">Completion reason</label>
-        <select id="medication-completion" name="completionReason"><option value="">Not completed</option><option value="finished_bottle">Finished bottle</option><option value="stopped_taking">Stopped taking</option></select>
-        <label for="medication-end">End date (optional)</label>
-        <input id="medication-end" name="endedAt" type="date">
-        <button type="submit" disabled>Save medication — coming soon</button>
+
+        <fieldset class="photo-fields">
+          <legend>Photograph the label</legend>
+          <p id="photo-help">Try to include the medication name on the label. Check that it is readable before saving.</p>
+          <div id="photo-preview" class="photo-preview" aria-live="polite">
+            <div id="photo-placeholder" class="photo-placeholder">
+              <span class="photo-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"></path><circle cx="12" cy="13" r="3.2"></circle></svg></span>
+              <strong>Add a label photo</strong>
+              <p>Use a clear photo that you can refer back to.</p>
+            </div>
+            <img id="medication-photo-preview" alt="Selected medication label; check that the printed name is readable" hidden>
+          </div>
+          <label class="file-button primary" for="medication-camera"><span aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"></path><circle cx="12" cy="13" r="3.2"></circle></svg></span> Take label photo</label>
+          <input id="medication-camera" name="cameraPhoto" type="file" accept="image/*" capture="environment" aria-describedby="photo-help" class="visually-hidden-input">
+          <label class="file-button secondary" for="medication-photo">Choose from Photos</label>
+          <input id="medication-photo" name="photo" type="file" accept="image/*" aria-describedby="photo-help" class="visually-hidden-input">
+          <button type="button" id="add-photo-later" class="secondary add-later">Add photo later</button>
+          <div class="actions photo-loaded-actions">
+            <button type="button" id="retake-photo" class="secondary" hidden>Retake photo</button>
+            <button type="button" id="replace-photo" class="secondary" hidden>Replace photo</button>
+          </div>
+          <p id="medication-incomplete" class="incomplete-note">Photo and name needed. You can add missing details later.</p>
+          <p class="help">CareTrail stores the label photo on this device for you to view. It does not read or understand the label, or identify the medication.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Medication details</legend>
+          <label for="medication-name">Name or familiar nickname <span>(optional)</span></label>
+          <input id="medication-name" name="name" type="text" autocomplete="off" enterkeyhint="done">
+          <label for="medication-dose">Dose details <span>(optional)</span></label>
+          <input id="medication-dose" name="doseText" type="text" autocomplete="off" enterkeyhint="done">
+        </fieldset>
+
+        <fieldset>
+          <legend>Start date</legend>
+          <button type="button" id="starting-today" class="primary">Starting today</button>
+          <button type="button" id="choose-start-date" class="date-link text-button" data-focus="medication-start" aria-expanded="false" aria-controls="start-date-fields">Choose another start date</button>
+          <div id="start-date-fields" class="start-date-fields">
+            <label for="medication-start">Start date <span>(optional)</span></label>
+            <input id="medication-start" name="startedAt" type="date" aria-describedby="start-help">
+            <button type="button" class="calendar-trigger" data-calendar-trigger="medication-start" aria-controls="calendar-medication-start" aria-expanded="false">
+              <span>Choose start date</span><span class="calendar-trigger-icon" aria-hidden="true">▾</span>
+            </button>
+            <div id="calendar-medication-start" class="calendar-popover" data-calendar-for="medication-start" role="dialog" aria-label="Choose medication start date" hidden>
+              <div class="calendar-header"><button type="button" class="calendar-arrow" data-calendar-previous aria-label="Previous month">‹</button><h4 data-calendar-month>September 2026</h4><button type="button" class="calendar-arrow" data-calendar-next aria-label="Next month">›</button></div>
+              <div class="calendar-weekdays" aria-hidden="true"><span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span></div>
+              <div class="calendar-grid" role="grid" aria-label="September 2026"><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="August 30">30</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="August 31">31</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 1" aria-selected="false">1</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 2" aria-selected="false">2</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 3" aria-selected="false">3</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 4" aria-selected="false">4</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 5" aria-selected="false">5</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 6" aria-selected="false">6</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 7" aria-selected="false">7</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 8" aria-selected="false">8</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 9" aria-selected="false">9</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 10" aria-selected="false">10</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 11" aria-selected="false">11</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 12" aria-selected="false">12</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 13" aria-selected="false">13</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 14" aria-selected="false">14</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 15" aria-selected="false">15</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 16" aria-selected="false">16</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 17" aria-selected="false">17</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 18" aria-selected="false">18</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 19" aria-selected="false">19</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 20" aria-selected="false">20</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 21" aria-selected="false">21</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 22" aria-selected="false">22</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 23" aria-selected="false">23</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 24" aria-selected="false">24</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 25" aria-selected="false">25</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 26" aria-selected="false">26</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 27" aria-selected="false">27</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 28" aria-selected="false">28</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 29" aria-selected="false">29</button><button type="button" class="calendar-day" role="gridcell" aria-label="September 30" aria-selected="false">30</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="October 1">1</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="October 2">2</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="October 3">3</button></div>
+            </div>
+            <p id="start-help" class="help">Leave blank for “Date not entered” if you do not know.</p>
+          </div>
+        </fieldset>
+
+        <fieldset id="medication-completion-fields">
+          <legend>Course status</legend>
+          <label for="medication-status">Status</label>
+          <div class="segmented" role="group" aria-label="Course status">
+            <select id="medication-status" name="status">
+              <option value="ongoing" selected>Ongoing</option>
+              <option value="completed">Completed / Stopped</option>
+            </select>
+          </div>
+          <div class="end-options">
+            <p class="help">Choose why this course ended. End date defaults to today and can be changed.</p>
+            <div class="actions completion-actions">
+              <button type="button" id="finished-bottle" class="secondary" data-completion-reason="finished_bottle">Finished bottle</button>
+              <button type="button" id="stopped-taking" class="secondary" data-completion-reason="stopped_taking">Stopped taking</button>
+            </div>
+            <label for="medication-completion">Completion reason</label>
+            <select id="medication-completion" name="completionReason">
+              <option value="">Not completed</option>
+              <option value="finished_bottle">Finished bottle</option>
+              <option value="stopped_taking">Stopped taking</option>
+            </select>
+            <label for="medication-end">End date <span>(editable)</span></label>
+            <input id="medication-end" name="endedAt" type="date" aria-describedby="end-help">
+            <button type="button" class="calendar-trigger" data-calendar-trigger="medication-end" aria-controls="calendar-medication-end" aria-expanded="false">
+              <span>Choose end date</span><span class="calendar-trigger-icon" aria-hidden="true">▾</span>
+            </button>
+            <div id="calendar-medication-end" class="calendar-popover" data-calendar-for="medication-end" role="dialog" aria-label="Choose medication end date" hidden data-calendar-template="calendar-popover-template"></div>
+            <p id="end-help" class="help">A completion action selects today. Change the date if needed.</p>
+          </div>
+        </fieldset>
+
+        <p id="medication-message" class="form-message" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div class="actions"><button type="submit" id="save-medication" class="primary">Save medication</button></div>
+        <button type="button" id="delete-medication" class="danger secondary">Delete medication…</button>
       </form>
-      <div id="medication-list">
-        <h3>Ongoing medications</h3><p>Medication cards will appear here once storage is connected.</p>
-        <h3>Completed medications</h3><p>Completed courses will remain here until a new visit record is started.</p>
+    </section>
+
+    <section id="profile-view" class="view" aria-labelledby="profile-heading" data-screen>
+      <header class="section-header">
+        <h2 id="profile-heading" tabindex="-1">Profile</h2>
+        <p>Add context for your next conversation.</p>
+      </header>
+      <p class="callout">All fields are optional. You can record events without a profile. Your profile stays when you start a new visit record.</p>
+      <form id="profile-form" class="grouped-form" aria-labelledby="profile-heading">
+        <fieldset class="profile-group">
+          <legend>Personal details</legend>
+          <label for="profile-name">Name</label>
+          <input id="profile-name" name="name" type="text" autocomplete="name" enterkeyhint="next">
+          <label for="profile-dob">Date of birth</label>
+          <input id="profile-dob" name="dateOfBirth" type="date" autocomplete="bday">
+          <button type="button" class="calendar-trigger" data-calendar-trigger="profile-dob" aria-controls="calendar-profile-dob" aria-expanded="false">
+            <span>Choose date of birth</span><span class="calendar-trigger-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="calendar-profile-dob" class="calendar-popover" data-calendar-for="profile-dob" role="dialog" aria-label="Choose date of birth" hidden data-calendar-template="calendar-popover-template"></div>
+          <div class="age-display">
+            <span>Age</span>
+            <output id="profile-age" for="profile-dob" aria-live="polite">Calculated at report time</output>
+            <p class="help">Age is calculated when you prepare your report. It is not stored and cannot be typed here.</p>
+          </div>
+          <label for="profile-sex">Sex <span>(optional)</span></label>
+          <input id="profile-sex" name="sex" type="text" autocomplete="sex">
+          <label for="profile-blood">Blood group <span>(optional)</span></label>
+          <select id="profile-blood" name="bloodGroup">
+            <option value="Unknown" selected>Unknown</option>
+            <option value="Not entered">Not entered</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </fieldset>
+        <fieldset class="profile-group">
+          <legend>Health notes</legend>
+          <label for="profile-allergies">Allergies</label>
+          <textarea id="profile-allergies" name="allergies" rows="3" aria-describedby="allergies-help"></textarea>
+          <p id="allergies-help" class="help">Enter "Unknown" if unsure. A blank field means "Not entered," not "No allergies."</p>
+          <label for="profile-info">Additional information</label>
+          <textarea id="profile-info" name="additionalInfo" rows="3" aria-describedby="info-help"></textarea>
+          <p id="info-help" class="help">Chronic conditions, devices, or anything else you want your clinician to know.</p>
+        </fieldset>
+        <p id="profile-message" class="form-message" role="status" aria-live="polite" aria-atomic="true"></p>
+        <button type="submit" id="save-profile" class="primary">Save profile</button>
+      </form>
+      <aside class="notice" aria-label="About storage">
+        <strong>Your browser, your device</strong>
+        <p>Records are stored in this browser on this device. Browser data can be cleared or lost. Data does not sync across devices.</p>
+      </aside>
+    </section>
+
+    <section id="report-view" class="view" aria-labelledby="report-heading" data-screen>
+      <header class="section-header">
+        <h2 id="report-heading" tabindex="-1">Visit Report</h2>
+        <p>Bring this summary to your next appointment.</p>
+      </header>
+      <ol class="report-steps">
+        <li>Review your report.</li>
+        <li>Print or save, then check your copy exists.</li>
+        <li>Start a new visit record when you are ready.</li>
+      </ol>
+
+      <div id="report-content" class="report-preview">
+        <p class="eyebrow">Report preview</p>
+        <h3>Clinical Visit Summary</h3>
+        <p class="disclaimer">Patient-entered information; not clinically verified.</p>
+        <p class="generated-line">Generated: Not generated yet</p>
+
+        <section class="report-block" aria-labelledby="report-profile-heading">
+          <h4 id="report-profile-heading">Patient profile</h4>
+          <dl class="report-facts">
+            <div><dt>Name</dt><dd>Not entered</dd></div>
+            <div><dt>Age</dt><dd>Not entered</dd></div>
+            <div><dt>Allergies</dt><dd>Not entered</dd></div>
+            <div><dt>Blood group</dt><dd>Not entered</dd></div>
+            <div><dt>Additional notes</dt><dd>Not entered</dd></div>
+          </dl>
+        </section>
+
+        <section class="report-block" aria-labelledby="report-ongoing-heading">
+          <h4 id="report-ongoing-heading">Ongoing medications</h4>
+          <p class="help">None entered. Label photos appear at a medium size when available. Missing names use a stable label such as “Medication photo 1 — name not entered.”</p>
+        </section>
+
+        <section class="report-block" aria-labelledby="report-completed-heading">
+          <h4 id="report-completed-heading">Completed medications</h4>
+          <p class="help">None entered. Finished bottle and stopped taking are recorded as distinct reasons, with end dates.</p>
+        </section>
+
+        <section class="report-block" aria-labelledby="report-timeline-heading">
+          <h4 id="report-timeline-heading">Event timeline</h4>
+          <p class="help">No events yet. Each event shows Happened at (or “When it happened: not entered”) and an immutable Recorded at.</p>
+        </section>
       </div>
+
+      <div class="report-actions">
+        <button type="button" id="preview-report" class="secondary">Preview full report</button>
+        <button type="button" id="print-report" class="primary">Print / Save (PDF)</button>
+      </div>
+      <p class="help">Opening or printing a report does not clear anything. The browser cannot verify that a copy exists. A PDF alone is not a complete or secure backup.</p>
+
+      <div class="reset-panel">
+        <h3>Next appointment, fresh record</h3>
+        <button type="button" id="start-new-record">Start new visit record</button>
+        <p class="help warning-copy">Starting a new visit record permanently clears events and completed medication courses from this device. Ongoing medications, their photos, and your profile are kept. This action is irreversible.</p>
+      </div>
+      <p id="report-message" class="form-message" role="status" aria-live="polite" aria-atomic="true"></p>
     </section>
 
-    <section id="profile" aria-labelledby="profile-heading" data-screen>
-      <h2 id="profile-heading" tabindex="-1">Profile</h2>
-      <p>All fields are optional. You can record an event without a profile.</p>
-      <form id="profile-form">
-        <label for="profile-name">Name</label><input id="profile-name" name="name" autocomplete="name">
-        <label for="profile-dob">Date of birth</label><input id="profile-dob" name="dateOfBirth" type="date" autocomplete="bday">
-        <label for="profile-sex">Sex (optional)</label><input id="profile-sex" name="sex">
-        <label for="profile-blood">Blood group (optional)</label>
-        <select id="profile-blood" name="bloodGroup">
-          <option value="">Not entered</option><option>Unknown</option>
-          <option>A+</option><option>A−</option><option>B+</option><option>B−</option><option>AB+</option><option>AB−</option><option>O+</option><option>O−</option>
-        </select>
-        <label for="profile-allergies">Allergies</label>
-        <textarea id="profile-allergies" name="allergies" rows="3" aria-describedby="allergies-help"></textarea>
-        <p id="allergies-help">Enter “Unknown” if unsure. A blank field means “Not entered.”</p>
-        <label for="profile-info">Additional information</label><textarea id="profile-info" name="additionalInfo" rows="3"></textarea>
-        <button type="submit" disabled>Save profile — coming soon</button>
-      </form>
-    </section>
-
-    <section id="report" aria-labelledby="report-heading" data-screen>
-      <h2 id="report-heading" tabindex="-1">Visit report</h2>
-      <div id="report-content"><p>Report preview will appear here when the report module is connected.</p><p>Patient-entered information; not clinically verified.</p></div>
-      <button type="button" id="print-report" disabled>Print / Save report</button>
-      <p>After printing or saving, check that your copy exists. The browser cannot verify this. A PDF alone is not a complete or secure backup.</p>
-      <button type="button" id="start-new-record" disabled>Start new visit record</button>
-      <p>A separate confirmation will explain the irreversible removal of events and completed courses and their unshared photos. Your profile and ongoing courses, original start dates, and photos will stay.</p>
-    </section>
+    <footer>CareTrail · A hackathon prototype<br>This prototype does not provide medical advice or verify medication identity.</footer>
   </main>
-  <footer>This prototype does not provide medical advice or verify medication identity.</footer>
+
+  <!-- ROLE 4: Clone templates, fill [data-field] via textContent, assign record IDs to
+       data-id and bind [data-action]. Give edit buttons record-specific accessible names.
+       Keep displayNumber stable; use it in unnamed card titles and accessible button names.
+       Fill photo alt text with the stable label; handle failed images with the placeholder.
+       Completed cards: data-status="completed", status text "Finished bottle" or
+       "Stopped taking", and unhide completionDetails with the editable end date.
+       No template is a saved or demonstration record.
+       File fields are UI-only, not stored Medication fields. Populate #event-recorded-at
+       from immutable createdAt. Views: #profile-view, #events-view, #medications-view,
+       #report-view. #medication-list is the ongoing card list; #completed-medications
+       is the completed list. #medication-incomplete: "Photo needed" / "Photo and name
+       needed" / hidden. Photo preview: set img src, unhide img, hide #photo-placeholder;
+       unhide #retake-photo and #replace-photo when a photo is loaded; clean object URLs.
+       Messages: #app-status and #{profile,event,medication,report}-message; use role=alert
+       for errors and retain entered data. Completion actions set status, reason and local
+       end date; all date fields remain editable. Reset and delete require dialog binding. -->
+  <template id="event-card-template">
+    <article class="event-card" data-id="">
+      <div class="card-top">
+        <span class="event-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+        <div class="card-top-text">
+          <span class="status-badge" data-field="type">Other</span>
+          <h4 data-field="description">No details entered</h4>
+        </div>
+        <span class="chevron" aria-hidden="true">›</span>
+      </div>
+      <dl class="card-facts"><div><dt>Happened at</dt><dd data-field="occurredAt">Not entered</dd></div></dl>
+      <p class="help" data-field="sortNote">Placed by recorded time</p>
+      <p data-field="medicationName" hidden></p><p data-field="doseNote" hidden></p>
+      <div class="card-footer"><span>Recorded at</span><span data-field="createdAt">Not entered</span></div>
+      <div class="actions"><button type="button" class="secondary card-edit" data-action="edit-event">Edit event</button><button type="button" class="secondary danger" data-action="delete-event">Delete…</button></div>
+    </article>
+  </template>
+  <template id="medication-card-template">
+    <article class="medication-card" data-id="" data-status="ongoing">
+      <div class="card-top"><span class="status-badge" data-field="status">Ongoing</span><span class="small" data-field="displayNumber">Medication number</span><span class="chevron" aria-hidden="true">›</span></div>
+      <div class="card-photo"><img data-field="photo" alt="" hidden><p class="photo-placeholder" data-field="photoPlaceholder">Photo and name needed</p></div>
+      <div class="card-body"><h4 data-field="name">Name not entered</h4><p class="incomplete-note" data-field="incomplete">Photo and name needed</p>
+        <dl class="card-facts"><div><dt>Started</dt><dd data-field="startedAt">Date not entered</dd></div><div data-field="completionDetails" hidden><dt data-field="completionReason">Completed</dt><dd data-field="endedAt">Date not entered</dd></div></dl>
+        <p data-field="doseText" hidden></p><button type="button" class="secondary card-edit" data-action="edit-medication">View / edit medication</button>
+      </div>
+    </article>
+  </template>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+    <h2 id="confirm-title">Confirm removal</h2>
+    <p id="confirm-description">This action cannot be undone.</p>
+    <div id="confirm-details"></div>
+    <div class="actions">
+      <button id="confirm-cancel" type="button" class="secondary">Keep records</button>
+      <button id="confirm-accept" type="button" class="danger">Confirm removal</button>
+    </div>
+  </dialog>
+  <!-- Role 4: clone this presentation-only calendar into popovers marked
+       [data-calendar-template], update [data-calendar-month], then synchronize
+       .is-selected and aria-selected with the associated native date input. -->
+  <template id="calendar-popover-template">
+    <div class="calendar-header"><button type="button" class="calendar-arrow" data-calendar-previous aria-label="Previous month">‹</button><h4 data-calendar-month>September 2026</h4><button type="button" class="calendar-arrow" data-calendar-next aria-label="Next month">›</button></div>
+    <div class="calendar-weekdays" aria-hidden="true"><span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span></div>
+    <div class="calendar-grid" role="grid" aria-label="Calendar month"><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="Previous month, day 30">30</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="Previous month, day 31">31</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">1</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">2</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">3</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">4</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">5</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">6</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">7</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">8</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">9</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">10</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">11</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">12</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">13</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">14</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">15</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">16</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">17</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">18</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">19</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">20</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">21</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">22</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">23</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">24</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">25</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">26</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">27</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">28</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">29</button><button type="button" class="calendar-day" role="gridcell" aria-selected="false">30</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="Next month, day 1">1</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="Next month, day 2">2</button><button type="button" class="calendar-day is-outside" role="gridcell" aria-label="Next month, day 3">3</button></div>
+  </template>
 </body>
 </html>
