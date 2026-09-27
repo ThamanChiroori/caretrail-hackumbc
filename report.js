@@ -8,14 +8,36 @@ function element(tag, className, content) {
 }
 
 function formatDate(value, includeTime = false) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return new Intl.DateTimeFormat(undefined, includeTime
-    ? { dateStyle: 'medium', timeStyle: 'short' }
-    : { dateStyle: 'medium' }).format(date);
-}
+  const input = text(value);
+  if (!input) return '';
 
+  let date;
+
+  const calendarMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input);
+
+  if (calendarMatch) {
+    const [, year, month, day] = calendarMatch.map(Number);
+    date = new Date(year, month - 1, day);
+
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return '';
+    }
+  } else {
+    date = new Date(input);
+    if (Number.isNaN(date.getTime())) return '';
+  }
+
+  return new Intl.DateTimeFormat(
+    undefined,
+    includeTime
+      ? { dateStyle: 'medium', timeStyle: 'short' }
+      : { dateStyle: 'medium' }
+  ).format(date);
+}
 function ageAt(dob, now = new Date()) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text(dob));
   if (!match) return '';
