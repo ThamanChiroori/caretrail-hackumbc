@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#185c50">
+  <title>CareTrail</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="app-header">
+    <h1>CareTrail</h1>
+    <p>Your notes between appointments</p>
+  </header>
+  <main id="main">
+    <aside class="notice" aria-label="Prototype information">
+      <strong>Hackathon prototype — fictional data only.</strong>
+      <p>When storage is connected, records will stay in this browser on this device. Browser data can be cleared or lost and does not sync across devices.</p>
+    </aside>
+    <nav aria-label="Main navigation">
+      <a href="#events" aria-current="page">Events</a>
+      <a href="#medications">Medications</a>
+      <a href="#profile">Profile</a>
+      <a href="#report">Visit report</a>
+    </nav>
+    <p id="app-status" role="status" aria-live="polite">Shell preview: saving, photos, and reports are not connected yet.</p>
+
+    <section id="events" aria-labelledby="events-heading" data-screen>
+      <h2 id="events-heading" tabindex="-1">Events</h2>
+      <button type="button" id="add-event" data-focus="event-type">Add event</button>
+      <form id="event-form">
+        <h3>Event details</h3>
+        <input type="hidden" name="id">
+        <label for="event-type">Event type</label>
+        <select id="event-type" name="type">
+          <option value="other">Other</option>
+          <option value="symptom">Symptom</option>
+          <option value="injury">Injury</option>
+          <option value="possible_reaction">Possible reaction</option>
+          <option value="consultation">Consultation</option>
+          <option value="medication_taken">Medication taken</option>
+        </select>
+        <label for="event-description">Description (optional)</label>
+        <textarea id="event-description" name="description" rows="3"></textarea>
+        <label for="event-occurred-at">When it happened (optional)</label>
+        <input id="event-occurred-at" name="occurredAt" type="datetime-local" aria-describedby="event-time-help">
+        <p id="event-time-help">Leave blank if unknown. Recorded at will be set automatically when first saved and will stay unchanged when edited.</p>
+        <label for="event-medication">Linked medication (optional)</label>
+        <select id="event-medication" name="medicationId"><option value="">None</option></select>
+        <label for="event-dose">Dose note (optional, for medication taken)</label>
+        <input id="event-dose" name="doseNote" type="text">
+        <button type="submit" disabled>Save event — coming soon</button>
+      </form>
+      <h3>Previous events</h3>
+      <div id="timeline-list"><p>Events will appear here once storage is connected.</p></div>
+    </section>
+
+    <section id="medications" aria-labelledby="medications-heading" data-screen>
+      <h2 id="medications-heading" tabindex="-1">Medications</h2>
+      <button type="button" id="add-medication" data-focus="medication-photo">Add medication</button>
+      <p>Record a medication course here. To record an individual dose, add a “medication taken” event.</p>
+      <form id="medication-form">
+        <h3>Medication details</h3>
+        <input type="hidden" name="id">
+        <input type="hidden" name="photoId">
+        <label for="medication-photo">Take or choose a label photo</label>
+        <p id="photo-help">Try to include the medication name on the label. Check that it is readable before saving.</p>
+        <input id="medication-photo" name="photo" type="file" accept="image/*" aria-describedby="photo-help" disabled>
+        <div id="photo-preview" aria-live="polite"><p>Photo preview will appear here when photo handling is connected.</p></div>
+        <div class="actions">
+          <button type="button" id="retake-photo" disabled>Retake photo</button>
+          <button type="button" id="add-photo-later" disabled>Add photo later</button>
+        </div>
+        <label for="medication-name">Name or familiar nickname (optional)</label>
+        <input id="medication-name" name="name" type="text">
+        <label for="medication-dose">Dose details (optional)</label>
+        <input id="medication-dose" name="doseText" type="text">
+        <button type="button" id="starting-today" disabled>Starting today</button>
+        <label for="medication-start">Choose another start date (optional)</label>
+        <input id="medication-start" name="startedAt" type="date" aria-describedby="start-help">
+        <p id="start-help">Leave blank for “Date not entered.”</p>
+        <label for="medication-status">Status</label>
+        <select id="medication-status" name="status"><option value="ongoing">Ongoing</option><option value="completed">Completed</option></select>
+        <label for="medication-completion">Completion reason</label>
+        <select id="medication-completion" name="completionReason"><option value="">Not completed</option><option value="finished_bottle">Finished bottle</option><option value="stopped_taking">Stopped taking</option></select>
+        <label for="medication-end">End date (optional)</label>
+        <input id="medication-end" name="endedAt" type="date">
+        <button type="submit" disabled>Save medication — coming soon</button>
+      </form>
+      <div id="medication-list">
+        <h3>Ongoing medications</h3><p>Medication cards will appear here once storage is connected.</p>
+        <h3>Completed medications</h3><p>Completed courses will remain here until a new visit record is started.</p>
+      </div>
+    </section>
+
+    <section id="profile" aria-labelledby="profile-heading" data-screen>
+      <h2 id="profile-heading" tabindex="-1">Profile</h2>
+      <p>All fields are optional. You can record an event without a profile.</p>
+      <form id="profile-form">
+        <label for="profile-name">Name</label><input id="profile-name" name="name" autocomplete="name">
+        <label for="profile-dob">Date of birth</label><input id="profile-dob" name="dateOfBirth" type="date" autocomplete="bday">
+        <label for="profile-sex">Sex (optional)</label><input id="profile-sex" name="sex">
+        <label for="profile-blood">Blood group (optional)</label>
+        <select id="profile-blood" name="bloodGroup">
+          <option value="">Not entered</option><option>Unknown</option>
+          <option>A+</option><option>A−</option><option>B+</option><option>B−</option><option>AB+</option><option>AB−</option><option>O+</option><option>O−</option>
+        </select>
+        <label for="profile-allergies">Allergies</label>
+        <textarea id="profile-allergies" name="allergies" rows="3" aria-describedby="allergies-help"></textarea>
+        <p id="allergies-help">Enter “Unknown” if unsure. A blank field means “Not entered.”</p>
+        <label for="profile-info">Additional information</label><textarea id="profile-info" name="additionalInfo" rows="3"></textarea>
+        <button type="submit" disabled>Save profile — coming soon</button>
+      </form>
+    </section>
+
+    <section id="report" aria-labelledby="report-heading" data-screen>
+      <h2 id="report-heading" tabindex="-1">Visit report</h2>
+      <div id="report-content"><p>Report preview will appear here when the report module is connected.</p><p>Patient-entered information; not clinically verified.</p></div>
+      <button type="button" id="print-report" disabled>Print / Save report</button>
+      <p>After printing or saving, check that your copy exists. The browser cannot verify this. A PDF alone is not a complete or secure backup.</p>
+      <button type="button" id="start-new-record" disabled>Start new visit record</button>
+      <p>A separate confirmation will explain the irreversible removal of events and completed courses and their unshared photos. Your profile and ongoing courses, original start dates, and photos will stay.</p>
+    </section>
+  </main>
+  <footer>This prototype does not provide medical advice or verify medication identity.</footer>
+</body>
+</html>
