@@ -194,16 +194,32 @@ async function refresh() {
   for (const [id, url] of Object.entries(previousUrls)) if (!nextUrls[id]) URL.revokeObjectURL(url);
 }
 
+// Paint feedback before storage work, even when localStorage resolves immediately.
+const paintFeedback = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+function buttonFeedback(button) {
+  if (!button) return () => {};
+  const wasDisabled = button.disabled;
+  button.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  return () => {
+    button.disabled = wasDisabled;
+    button.removeAttribute('aria-busy');
+  };
+}
+
 // No duplicate submissions or form edits may race an asynchronous photo write.
 async function run(messageId, action, success, retryCleanup = null) {
   if (busy || !ready) return;
   busy = true;
+  const finishFeedback = buttonFeedback(document.activeElement?.matches('button')
+    ? document.activeElement : $(`save-${messageId.split('-')[0]}`));
   const controls = [...document.querySelectorAll('button, input, select, textarea')];
   const disabled = controls.map((control) => control.disabled);
   controls.forEach((control) => { control.disabled = true; });
   message(messageId, 'Working…');
   let committed = false;
   try {
+    await paintFeedback();
     await action();
     committed = true;
     printAttempted = false;
@@ -229,6 +245,7 @@ async function run(messageId, action, success, retryCleanup = null) {
     }
   } finally {
     controls.forEach((control, index) => { control.disabled = disabled[index]; });
+    finishFeedback();
     busy = false;
   }
 }
@@ -432,7 +449,10 @@ $('cancel-medication').addEventListener('click', () => {
 async function prepareReport(print = false) {
   if (!ready || busy) return;
   busy = true;
+  const finishFeedback = buttonFeedback($(print ? 'print-report' : 'preview-report'));
+  message('report-message', 'Preparing report…');
   try {
+    await paintFeedback();
     await refresh();
     location.hash = 'report-view';
     showScreen();
@@ -444,7 +464,7 @@ async function prepareReport(print = false) {
     }
     message('report-message', [print ? 'Check that your printed or saved copy exists before starting a new visit record.' : 'Report updated from saved records.', photoWarning].filter(Boolean).join(' '), !!photoWarning);
   } catch (error) { message('report-message', error.message || 'Report could not be prepared. Try again.', true); }
-  finally { busy = false; }
+  finally { finishFeedback(); busy = false; }
 }
 $('preview-report').addEventListener('click', () => prepareReport());
 $('print-report').addEventListener('click', () => prepareReport(true));

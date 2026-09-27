@@ -3,17 +3,21 @@
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:112.5%;
   line-height:1.5;
-  color:#18332E;
-  background:#f5f7f6;
-  --bg:#f5f7f6;
-  --bg-end:#f0f4f2;
+  color:var(--ink);
+  background:var(--bg);
+  --bg:#F5F9F8;
+  --bg-end:#EDF4EF;
   --card:#FFFFFF;
-  --ink:#18332E;
-  --muted:#697975;
-  --green:#1f5e4b;
-  --green-dark:#164a3a;
-  --soft:#E8F3EF;
-  --line:#DCE5E1;
+  --ink:#20505E;
+  --muted:#48656C;
+  --green:#20505E;
+  --green-dark:#173D48;
+  --teal:#478F83;
+  --lime:#B4D586;
+  --soft:#EAF3E4;
+  --line:#CCDCD8;
+  --disabled-bg:#E5ECEA;
+  --disabled-ink:#536B70;
   --danger:#B42318;
   --danger-soft:#FBEAE8;
   --coral:#c45c4a;
@@ -93,31 +97,37 @@ button {
   overflow-wrap:anywhere;
   line-height:1.35
 }
+@media (hover:hover) and (pointer:fine) {
 button:hover {
   background:var(--green-dark);
   border-color:var(--green-dark)
 }
+}
+
 button:disabled {
   cursor:not-allowed;
-  background:#e7ece9;
-  color:#7c8a85;
-  border-color:#d3ddd8
+  background:var(--disabled-bg);
+  color:var(--disabled-ink);
+  border-color:var(--line)
 }
 input:disabled {
-  background:#eef2f0;
-  color:#7c8a85
+  background:var(--disabled-bg);
+  color:var(--disabled-ink)
 }
 button.secondary {
   background:transparent;
   color:var(--green);
   border-color:var(--line)
 }
+@media (hover:hover) and (pointer:fine) {
 button.secondary:hover {
   background:var(--soft);
   border-color:var(--green)
 }
+}
+
 button.secondary:disabled,button.text-button:disabled {
-  color:#9aa6a2;
+  color:var(--disabled-ink);
   border-color:var(--line);
   background:transparent
 }
@@ -136,7 +146,7 @@ button.danger:not(.secondary) {
   border-radius:1.1rem;
   padding:1rem 1.1rem;
   min-height:48px;
-  box-shadow:0 8px 18px -8px rgba(31,94,75,.55)
+  box-shadow:0 8px 18px -8px rgba(32,80,94,.55)
 }
 button.primary:disabled {
   box-shadow:none
@@ -172,6 +182,7 @@ button.primary:disabled {
   gap:.6rem;
 }
 .brand {
+  min-height:44px;
   display:inline-flex;
   align-items:center;
   gap:.5rem;
@@ -184,12 +195,14 @@ button.primary:disabled {
 .brand-mark {
   display:grid;
   place-items:center;
-  width:1.85rem;
-  height:1.85rem;
+  width:3.5rem;
   flex-shrink:0;
-  border-radius:.6rem;
-  background:var(--soft);
-  color:var(--green)
+}
+.brand-mark img {
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
 }
 .prototype-tag {
   margin-left:auto;
@@ -258,9 +271,11 @@ button.primary:disabled {
 }
 .bottom-nav a[aria-current=page] {
   color:var(--green);
+  background:var(--soft);
+  box-shadow:inset 0 -3px var(--teal);
 }
 .bottom-nav a[aria-current=page] .nav-icon {
-  background:var(--soft);
+  background:var(--lime);
   color:var(--green);
 }
 main {
@@ -369,7 +384,7 @@ form {
   border:1px solid var(--line);
   border-radius:var(--radius-lg);
   margin:1.4rem 0 1.6rem;
-  box-shadow:0 12px 30px -20px rgba(24,51,46,.25)
+  box-shadow:0 12px 30px -20px rgba(32,80,94,.25)
 }
 .grouped-form {
   background:transparent;
@@ -412,7 +427,7 @@ input,select,textarea {
   width:100%;
   border:1px solid var(--line);
   border-radius:.8rem;
-  background:#fbfcfb;
+  background:var(--card);
   color:var(--ink);
   padding:.85rem .85rem;
   line-height:1.4;
@@ -529,7 +544,7 @@ fieldset .help {
   border-top:1px solid var(--line);
   border-radius:var(--radius);
   padding:1.1rem;
-  box-shadow:0 10px 24px -20px rgba(24,51,46,.25)
+  box-shadow:0 10px 24px -20px rgba(32,80,94,.25)
 }
 .grouped-form .form-message,
 .grouped-form>button[type=submit] {
@@ -612,7 +627,7 @@ fieldset .help {
   cursor:pointer;
 }
 .file-button.primary {
-  box-shadow:0 8px 18px -8px rgba(31,94,75,.55)
+  box-shadow:0 8px 18px -8px rgba(32,80,94,.55)
 }
 .file-button.secondary {
   background:transparent;
@@ -623,9 +638,9 @@ fieldset .help {
 .file-button.is-disabled {
   cursor:not-allowed;
   pointer-events:none;
-  background:#e7ece9;
-  color:#7c8a85;
-  border-color:#d3ddd8;
+  background:var(--disabled-bg);
+  color:var(--disabled-ink);
+  border-color:var(--line);
   box-shadow:none
 }
 .file-button.secondary.is-disabled {
@@ -654,10 +669,13 @@ fieldset .help {
   text-decoration:underline;
   text-underline-offset:.2em
 }
+@media (hover:hover) and (pointer:fine) {
 .text-button:hover {
   background:transparent;
   border-color:transparent
 }
+}
+
 .date-link {
   display:block;
   padding:.55rem 0;
@@ -688,7 +706,7 @@ fieldset .help {
   border:1px solid var(--line);
   border-radius:var(--radius);
   overflow-wrap:anywhere;
-  box-shadow:0 10px 24px -20px rgba(24,51,46,.25)
+  box-shadow:0 10px 24px -20px rgba(32,80,94,.25)
 }
 .event-card {
   padding:1rem 1rem .9rem;
@@ -789,7 +807,7 @@ fieldset .help {
 }
 .medication-card[data-status=completed] {
   border-style:dashed;
-  background:#fbfcfb
+  background:var(--card)
 }
 .medication-card[data-status=completed] .status-badge {
   color:var(--muted)
@@ -814,7 +832,7 @@ fieldset .help {
   padding:1.3rem;
   border-radius:var(--radius);
   margin:1.4rem 0;
-  box-shadow:0 12px 30px -20px rgba(24,51,46,.25)
+  box-shadow:0 12px 30px -20px rgba(32,80,94,.25)
 }
 .report-preview p {
   font-size:.87rem
@@ -892,10 +910,13 @@ fieldset .help {
   border-radius:var(--radius);
   font-weight:800
 }
+@media (hover:hover) and (pointer:fine) {
 #start-new-record:hover {
   background:#f3d4ce;
   border-color:var(--coral)
 }
+}
+
 .warning-copy {
   color:#7a332c !important;
   font-weight:600
@@ -925,7 +946,7 @@ dialog {
   color:var(--ink)
 }
 dialog::backdrop {
-  background:rgba(24,51,46,.55)
+  background:rgba(32,80,94,.55)
 }
 dialog h2 {
   font-size:1.4rem
@@ -934,7 +955,7 @@ dialog h2 {
   display:none!important
 }
 :focus-visible {
-  outline:3px solid #b55d17;
+  outline:3px solid var(--green);
   outline-offset:3px
 }
 /* Navigation focuses view headings for assistive technology, not interaction. */
@@ -977,8 +998,77 @@ dialog h2 {
 }
 @media(prefers-reduced-motion:reduce) {
   * {
-    scroll-behavior:auto!important
+    scroll-behavior:auto!important;
+    transition:none!important;
+    animation:none!important;
   }
+}
+
+/* Feedback changes paint/compositing only, never control dimensions. */
+button,.file-button,.bottom-nav a,.brand {
+  transition:background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  touch-action:manipulation;
+}
+@media (hover:hover) and (pointer:fine) {
+  input:not(:disabled):hover,select:not(:disabled):hover,textarea:not(:disabled):hover {
+    border-color:var(--teal);
+  }
+  .file-button:not(.is-disabled):hover {
+    background:var(--green-dark);
+    color:var(--card);
+  }
+  .file-button.secondary:not(.is-disabled):hover,
+  .bottom-nav a:hover,.brand:hover {
+    background:var(--soft);
+    color:var(--ink);
+  }
+  button.danger:not(:disabled):hover,
+  #start-new-record:not(:disabled):hover {
+    background:var(--danger-soft);
+    color:var(--danger);
+    border-color:var(--danger);
+    box-shadow:inset 0 -3px var(--danger);
+  }
+}
+button:not(:disabled):active,.file-button:not(.is-disabled):active,
+.bottom-nav a:active,.brand:active {
+  background:var(--lime);
+  color:var(--ink);
+  box-shadow:inset 0 0 0 2px var(--teal);
+  transform:scale(.985);
+  transition:none;
+}
+button.danger:not(:disabled):active,#start-new-record:not(:disabled):active {
+  background:var(--danger);
+  color:var(--card);
+  box-shadow:inset 0 0 0 2px var(--danger);
+}
+/* The file input is visually hidden; outline its visible label on keyboard focus. */
+.file-button:has(+ input:focus-visible) {
+  outline:3px solid var(--green);
+  outline-offset:3px;
+}
+button:disabled,button.secondary:disabled,button.text-button:disabled,
+#start-new-record:disabled,input:disabled,select:disabled,textarea:disabled,
+.file-button:has(+ input:disabled) {
+  background:var(--disabled-bg);
+  color:var(--disabled-ink);
+  border-color:var(--line);
+  box-shadow:none;
+  cursor:not-allowed;
+  transform:none;
+  transition:none;
+}
+.file-button:has(+ input:disabled) { pointer-events:none; }
+button[aria-busy="true"]:disabled {
+  background:var(--soft);
+  color:var(--ink);
+  border-color:var(--teal);
+  box-shadow:inset 0 -4px var(--teal);
+  cursor:progress;
+}
+@media(prefers-reduced-motion:reduce) {
+  button:active,.file-button:active,.bottom-nav a:active,.brand:active { transform:none!important; }
 }
 
 /* Let native date segments reflow instead of truncating at larger text sizes. */
@@ -1015,11 +1105,14 @@ img,output,fieldset,form,.card-list,.card-body,.card-photo,.photo-preview,.view 
   text-align:left;
   box-shadow:none;
 }
+@media (hover:hover) and (pointer:fine) {
 .calendar-trigger:hover {
   color:var(--ink);
   background:var(--soft);
-  border-color:#b9cec7;
+  border-color:var(--teal);
 }
+}
+
 .calendar-trigger-icon {
   flex:0 0 auto;
   color:var(--muted);
@@ -1034,7 +1127,7 @@ img,output,fieldset,form,.card-list,.card-body,.card-photo,.photo-preview,.view 
   background:#fff;
   border:1px solid var(--line);
   border-radius:22px;
-  box-shadow:0 18px 38px rgba(24,51,46,.16),0 3px 9px rgba(24,51,46,.08);
+  box-shadow:0 18px 38px rgba(32,80,94,.16),0 3px 9px rgba(32,80,94,.08);
 }
 .calendar-header {
   display:grid;
@@ -1057,18 +1150,21 @@ img,output,fieldset,form,.card-list,.card-body,.card-photo,.photo-preview,.view 
   padding:0;
   border:0;
   border-radius:50%;
-  color:#0A84FF;
+  color:var(--green);
   background:transparent;
   box-shadow:none;
   font-size:2rem;
   font-weight:400;
   line-height:1;
 }
+@media (hover:hover) and (pointer:fine) {
 .calendar-arrow:hover {
-  color:#0A84FF;
-  background:#e9f4ff;
+  color:var(--green);
+  background:var(--soft);
   border:0;
 }
+}
+
 .calendar-weekdays,.calendar-grid {
   display:grid;
   grid-template-columns:repeat(7,minmax(0,1fr));
@@ -1077,7 +1173,7 @@ img,output,fieldset,form,.card-list,.card-body,.card-photo,.photo-preview,.view 
 }
 .calendar-weekdays {
   margin-bottom:.35rem;
-  color:#7b8784;
+  color:var(--muted);
   font-size:.61rem;
   font-weight:800;
   letter-spacing:.055em;
@@ -1104,29 +1200,38 @@ img,output,fieldset,form,.card-list,.card-body,.card-photo,.photo-preview,.view 
   font-size:.91rem;
   font-weight:650;
 }
+@media (hover:hover) and (pointer:fine) {
 .calendar-day:hover {
   color:var(--ink);
-  background:#e9f4ff;
+  background:var(--soft);
   border:0;
 }
+}
+
 .calendar-day.is-selected,
 .calendar-day[aria-selected="true"] {
   color:#fff;
-  background:#0A84FF;
-  border-color:#0A84FF;
+  background:var(--green);
+  border-color:var(--green);
   font-weight:800;
 }
+@media (hover:hover) and (pointer:fine) {
 .calendar-day.is-selected:hover,
 .calendar-day[aria-selected="true"]:hover {
   color:#fff;
-  background:#0076e5;
+  background:var(--green-dark);
 }
+}
+
 .calendar-day.is-outside {
-  color:#a7b0ae;
+  color:var(--muted);
 }
+@media (hover:hover) and (pointer:fine) {
 .calendar-day.is-outside:hover {
-  color:#697975;
+  color:var(--muted);
 }
+}
+
 @media(max-width:359px) {
   .calendar-popover {
     padding:.75rem;
