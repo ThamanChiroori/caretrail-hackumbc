@@ -609,6 +609,10 @@ dialog h2 {
   outline:3px solid #b55d17;
   outline-offset:4px
 }
+/* Navigation focuses view headings for assistive technology, not interaction. */
+[data-screen] > .section-header > h2[tabindex="-1"]:focus {
+  outline:none
+}
 .skip-link {
   position:absolute;
   top:-10rem;
