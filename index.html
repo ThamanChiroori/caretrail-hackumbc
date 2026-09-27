@@ -4,126 +4,158 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#185c50">
-  <title>CareTrail</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>CareTrail — notes between appointments</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="report.css">
   <script type="module" src="app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="app-header">
-    <h1>CareTrail</h1>
-    <p>Your notes between appointments</p>
+    <h1><a class="brand" href="#events" aria-label="CareTrail, events"><span class="brand-mark" aria-hidden="true">+</span>CareTrail</a></h1>
+    <p>Your notes between appointments.</p>
+    <span class="prototype-tag">Fictional data only · Prototype</span>
   </header>
   <main id="main">
-    <aside class="notice" aria-label="Prototype information">
-      <strong>Hackathon prototype — fictional data only.</strong>
-      <p>When storage is connected, records will stay in this browser on this device. Browser data can be cleared or lost and does not sync across devices.</p>
-    </aside>
-    <nav aria-label="Main navigation">
-      <a href="#events" aria-current="page">Events</a>
-      <a href="#medications">Medications</a>
-      <a href="#profile">Profile</a>
-      <a href="#report">Visit report</a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#profile"><span aria-hidden="true">01</span> Profile</a>
+      <a href="#events" aria-current="page"><span aria-hidden="true">02</span> Events</a>
+      <a href="#medications"><span aria-hidden="true">03</span> Medications</a>
+      <a href="#report"><span aria-hidden="true">04</span> Visit Report</a>
     </nav>
-    <p id="app-status" role="status" aria-live="polite">Shell preview: saving, photos, and reports are not connected yet.</p>
+    <p id="app-status" class="message" role="status" aria-live="polite">Interface preview. Saving, photo handling, and reports are not connected yet. Entries are not saved.</p>
 
     <section id="events" aria-labelledby="events-heading" data-screen>
-      <h2 id="events-heading" tabindex="-1">Events</h2>
-      <button type="button" id="add-event" data-focus="event-type">Add event</button>
-      <form id="event-form">
-        <h3>Event details</h3>
+      <header class="section-header"><p class="eyebrow">Between appointments</p><h2 id="events-heading" tabindex="-1">Your events</h2><p>A little note now. A clearer conversation later.</p></header>
+      <button type="button" id="add-event" class="primary add-button" data-focus="event-type"><span aria-hidden="true">＋</span> Add event</button>
+      <div class="list-heading"><h3>Event timeline</h3><span>Oldest to newest</span></div>
+      <div id="timeline-list" class="card-list" aria-label="Recorded events">
+        <div class="empty-state"><span class="empty-icon" aria-hidden="true">＋</span><h4>No events yet</h4><p>Start with what you remember. Details and the time it happened can be added later.</p><p class="small">Saved events will appear as editable cards here.</p></div>
+      </div>
+      <form id="event-form" aria-labelledby="event-form-heading">
+        <div class="form-heading"><p class="eyebrow">Add or edit</p><h3 id="event-form-heading">Event details</h3><p>Only a recorded time is needed. All other details are optional.</p></div>
         <input type="hidden" name="id">
         <label for="event-type">Event type</label>
-        <select id="event-type" name="type">
-          <option value="other">Other</option>
-          <option value="symptom">Symptom</option>
-          <option value="injury">Injury</option>
-          <option value="possible_reaction">Possible reaction</option>
-          <option value="consultation">Consultation</option>
-          <option value="medication_taken">Medication taken</option>
-        </select>
-        <label for="event-description">Description (optional)</label>
-        <textarea id="event-description" name="description" rows="3"></textarea>
-        <label for="event-occurred-at">When it happened (optional)</label>
+        <select id="event-type" name="type"><option value="other">Other</option><option value="symptom">Symptom</option><option value="injury">Injury</option><option value="possible_reaction">Possible reaction</option><option value="consultation">Consultation</option><option value="medication_taken">Medication taken</option></select>
+        <label for="event-description">Description <span>(optional)</span></label>
+        <textarea id="event-description" name="description" rows="3" placeholder="What would you like to remember?"></textarea>
+        <label for="event-occurred-at">When it happened <span>(optional)</span></label>
         <input id="event-occurred-at" name="occurredAt" type="datetime-local" aria-describedby="event-time-help">
-        <p id="event-time-help">Leave blank if unknown. Recorded at will be set automatically when first saved and will stay unchanged when edited.</p>
-        <label for="event-medication">Linked medication (optional)</label>
+        <p id="event-time-help" class="help">Leave blank if unknown. The timeline uses the recorded time when no happened-at time is entered.</p>
+        <div class="recorded-time"><strong>Recorded at</strong><output id="event-recorded-at">Set automatically on first save</output><p class="help">This time stays unchanged when you edit.</p></div>
+        <label for="event-medication">Linked medication <span>(optional)</span></label>
         <select id="event-medication" name="medicationId"><option value="">None</option></select>
-        <label for="event-dose">Dose note (optional, for medication taken)</label>
+        <label for="event-dose">Dose note <span>(optional, for medication taken)</span></label>
         <input id="event-dose" name="doseNote" type="text">
-        <button type="submit" disabled>Save event — coming soon</button>
+        <p class="help">A link records your note; it does not establish a cause.</p>
+        <p id="event-message" class="form-message" role="status" aria-live="polite">Saving will be available when the app is connected.</p>
+        <div class="actions"><button id="save-event" type="submit" disabled>Save event</button><button id="cancel-event" type="button" class="secondary" disabled>Cancel edit</button></div>
       </form>
-      <h3>Previous events</h3>
-      <div id="timeline-list"><p>Events will appear here once storage is connected.</p></div>
     </section>
 
     <section id="medications" aria-labelledby="medications-heading" data-screen>
-      <h2 id="medications-heading" tabindex="-1">Medications</h2>
-      <button type="button" id="add-medication" data-focus="medication-photo">Add medication</button>
-      <p>Record a medication course here. To record an individual dose, add a “medication taken” event.</p>
-      <form id="medication-form">
-        <h3>Medication details</h3>
-        <input type="hidden" name="id">
-        <input type="hidden" name="photoId">
-        <label for="medication-photo">Take or choose a label photo</label>
-        <p id="photo-help">Try to include the medication name on the label. Check that it is readable before saving.</p>
-        <input id="medication-photo" name="photo" type="file" accept="image/*" aria-describedby="photo-help" disabled>
-        <div id="photo-preview" aria-live="polite"><p>Photo preview will appear here when photo handling is connected.</p></div>
-        <div class="actions">
-          <button type="button" id="retake-photo" disabled>Retake photo</button>
-          <button type="button" id="add-photo-later" disabled>Add photo later</button>
-        </div>
-        <label for="medication-name">Name or familiar nickname (optional)</label>
-        <input id="medication-name" name="name" type="text">
-        <label for="medication-dose">Dose details (optional)</label>
-        <input id="medication-dose" name="doseText" type="text">
-        <button type="button" id="starting-today" disabled>Starting today</button>
-        <label for="medication-start">Choose another start date (optional)</label>
-        <input id="medication-start" name="startedAt" type="date" aria-describedby="start-help">
-        <p id="start-help">Leave blank for “Date not entered.”</p>
-        <label for="medication-status">Status</label>
-        <select id="medication-status" name="status"><option value="ongoing">Ongoing</option><option value="completed">Completed</option></select>
-        <label for="medication-completion">Completion reason</label>
-        <select id="medication-completion" name="completionReason"><option value="">Not completed</option><option value="finished_bottle">Finished bottle</option><option value="stopped_taking">Stopped taking</option></select>
-        <label for="medication-end">End date (optional)</label>
-        <input id="medication-end" name="endedAt" type="date">
-        <button type="submit" disabled>Save medication — coming soon</button>
-      </form>
+      <header class="section-header"><p class="eyebrow">Labels &amp; courses</p><h2 id="medications-heading" tabindex="-1">Your medications</h2><p>Keep the label. Add the details you know.</p></header>
+      <button type="button" id="add-medication" class="primary add-button" data-focus="medication-photo"><span aria-hidden="true">＋</span> Add medication</button>
+      <p class="help course-help">This records a medication course. For an individual dose, add a “medication taken” event.</p>
       <div id="medication-list">
-        <h3>Ongoing medications</h3><p>Medication cards will appear here once storage is connected.</p>
-        <h3>Completed medications</h3><p>Completed courses will remain here until a new visit record is started.</p>
+        <section class="medication-group" aria-labelledby="ongoing-heading"><div class="list-heading"><h3 id="ongoing-heading">Ongoing</h3><span>Current courses</span></div><div id="ongoing-medications" class="card-list"><div class="empty-state"><h4>No ongoing medications</h4><p>Add a label photo to get started. If the bottle is unavailable, you can add the photo later.</p></div></div></section>
+        <section class="medication-group completed-group" aria-labelledby="completed-heading"><div class="list-heading"><h3 id="completed-heading">Completed</h3><span>Kept for your visit</span></div><div id="completed-medications" class="card-list"><div class="empty-state compact"><p>No completed courses yet. Finished or stopped courses will remain here until you start a new visit record.</p></div></div></section>
       </div>
+      <form id="medication-form" aria-labelledby="medication-form-heading">
+        <div class="form-heading"><p class="eyebrow">Add or edit</p><h3 id="medication-form-heading">Medication details</h3></div>
+        <input type="hidden" name="id"><input type="hidden" name="photoId">
+        <fieldset class="photo-fields"><legend>1. Start with the label</legend>
+          <p id="photo-help">Try to include the medication name on the label. Check that it is readable before saving.</p>
+          <label for="medication-camera">Take a label photo</label>
+          <input id="medication-camera" name="cameraPhoto" type="file" accept="image/*" capture="environment" aria-describedby="photo-help photo-unavailable" disabled>
+          <label for="medication-photo">Choose a label photo</label>
+          <input id="medication-photo" name="photo" type="file" accept="image/*" aria-describedby="photo-help photo-unavailable" disabled>
+          <p id="photo-unavailable" class="help">Camera and photo selection will be available when photo handling is connected.</p>
+          <div id="photo-preview" class="photo-preview" aria-live="polite"><div id="photo-placeholder" class="photo-placeholder"><span aria-hidden="true">▧</span><strong>No label photo selected</strong><p>Your preview will appear here.</p></div><img id="medication-photo-preview" alt="Selected medication label; check that the printed name is readable" hidden></div>
+          <div class="actions"><button type="button" id="retake-photo" class="secondary" disabled>Retake photo</button><button type="button" id="replace-photo" class="secondary" disabled>Replace photo</button></div>
+          <button type="button" id="add-photo-later" class="text-button" disabled>Add photo later</button>
+          <p id="medication-incomplete" class="incomplete-note">Photo and name needed. You can add missing details later.</p>
+          <p class="help">CareTrail does not read the photo or identify the medication.</p>
+        </fieldset>
+        <fieldset><legend>2. Add what you know</legend>
+          <label for="medication-name">Name or familiar nickname <span>(optional)</span></label><input id="medication-name" name="name" type="text" placeholder="Your own label for this medication">
+          <label for="medication-dose">Dose details <span>(optional)</span></label><input id="medication-dose" name="doseText" type="text">
+          <label for="medication-start">Start date <span>(optional)</span></label>
+          <button type="button" id="starting-today" class="primary" disabled>Starting today</button>
+          <button type="button" id="choose-start-date" class="date-link text-button" data-focus="medication-start">Choose another start date</button>
+          <input id="medication-start" name="startedAt" type="date" aria-describedby="start-help"><p id="start-help" class="help">Date not entered. Leave blank if you do not know.</p>
+        </fieldset>
+        <fieldset id="medication-completion-fields"><legend>3. Course status</legend><p class="help">For an existing course, record when it finished or you stopped taking it. You can correct these details later.</p>
+          <label for="medication-status">Status</label><select id="medication-status" name="status"><option value="ongoing">Ongoing</option><option value="completed">Completed</option></select>
+          <div class="actions completion-actions"><button type="button" id="finished-bottle" class="secondary" data-completion-reason="finished_bottle" disabled>Finished bottle</button><button type="button" id="stopped-taking" class="secondary" data-completion-reason="stopped_taking" disabled>Stopped taking</button></div>
+          <label for="medication-completion">Completion reason</label><select id="medication-completion" name="completionReason"><option value="">Not completed</option><option value="finished_bottle">Finished bottle</option><option value="stopped_taking">Stopped taking</option></select>
+          <label for="medication-end">End date <span>(editable)</span></label><input id="medication-end" name="endedAt" type="date" aria-describedby="end-help"><p id="end-help" class="help">When connected, a completion action selects today. Change the date if needed.</p>
+        </fieldset>
+        <p id="medication-message" class="form-message" role="status" aria-live="polite">Saving will be available when the app is connected.</p>
+        <div class="actions"><button type="submit" id="save-medication" disabled>Save medication</button><button type="button" id="cancel-medication" class="secondary" disabled>Cancel edit</button></div>
+        <button type="button" id="delete-medication" class="danger secondary" disabled>Delete medication…</button>
+      </form>
     </section>
 
     <section id="profile" aria-labelledby="profile-heading" data-screen>
-      <h2 id="profile-heading" tabindex="-1">Profile</h2>
-      <p>All fields are optional. You can record an event without a profile.</p>
+      <header class="section-header"><p class="eyebrow">A little about you</p><h2 id="profile-heading" tabindex="-1">Your profile</h2><p>Add context for your next conversation.</p></header>
+      <p class="callout">All fields are optional. You can record events without a profile. Your profile stays when you start a new visit record.</p>
       <form id="profile-form">
         <label for="profile-name">Name</label><input id="profile-name" name="name" autocomplete="name">
         <label for="profile-dob">Date of birth</label><input id="profile-dob" name="dateOfBirth" type="date" autocomplete="bday">
-        <label for="profile-sex">Sex (optional)</label><input id="profile-sex" name="sex">
-        <label for="profile-blood">Blood group (optional)</label>
-        <select id="profile-blood" name="bloodGroup">
-          <option value="">Not entered</option><option>Unknown</option>
-          <option>A+</option><option>A−</option><option>B+</option><option>B−</option><option>AB+</option><option>AB−</option><option>O+</option><option>O−</option>
-        </select>
-        <label for="profile-allergies">Allergies</label>
-        <textarea id="profile-allergies" name="allergies" rows="3" aria-describedby="allergies-help"></textarea>
-        <p id="allergies-help">Enter “Unknown” if unsure. A blank field means “Not entered.”</p>
+        <p class="help">Age is calculated when you prepare your report.</p>
+        <label for="profile-sex">Sex <span>(optional)</span></label><input id="profile-sex" name="sex">
+        <label for="profile-blood">Blood group <span>(optional)</span></label><select id="profile-blood" name="bloodGroup"><option value="">Not entered</option><option>Unknown</option><option>A+</option><option>A−</option><option>B+</option><option>B−</option><option>AB+</option><option>AB−</option><option>O+</option><option>O−</option></select>
+        <label for="profile-allergies">Allergies</label><textarea id="profile-allergies" name="allergies" rows="3" aria-describedby="allergies-help"></textarea><p id="allergies-help" class="help">Enter “Unknown” if unsure. A blank field means “Not entered,” not “No allergies.”</p>
         <label for="profile-info">Additional information</label><textarea id="profile-info" name="additionalInfo" rows="3"></textarea>
-        <button type="submit" disabled>Save profile — coming soon</button>
+        <p id="profile-message" class="form-message" role="status" aria-live="polite">Saving will be available when the app is connected.</p><button type="submit" id="save-profile" disabled>Save profile</button>
       </form>
     </section>
 
     <section id="report" aria-labelledby="report-heading" data-screen>
-      <h2 id="report-heading" tabindex="-1">Visit report</h2>
-      <div id="report-content"><p>Report preview will appear here when the report module is connected.</p><p>Patient-entered information; not clinically verified.</p></div>
-      <button type="button" id="print-report" disabled>Print / Save report</button>
-      <p>After printing or saving, check that your copy exists. The browser cannot verify this. A PDF alone is not a complete or secure backup.</p>
-      <button type="button" id="start-new-record" disabled>Start new visit record</button>
-      <p>A separate confirmation will explain the irreversible removal of events and completed courses and their unshared photos. Your profile and ongoing courses, original start dates, and photos will stay.</p>
+      <header class="section-header"><p class="eyebrow">Ready for your appointment</p><h2 id="report-heading" tabindex="-1">Visit report</h2><p>Your notes, brought together.</p></header>
+      <ol class="report-steps"><li>Review your report.</li><li>Print or save, then check your copy exists.</li><li>Start a new visit record when you are ready.</li></ol>
+      <div id="report-content" class="report-preview"><p class="eyebrow">Report preview</p><h3>Your visit at a glance</h3><p>The report module is not connected yet. Your profile, medication courses, label photos, and chronological events will appear here.</p><p class="verification-note">Patient-entered information; not clinically verified.</p></div>
+      <button type="button" id="print-report" class="primary" disabled>Print / Save report</button>
+      <p class="help">Opening or printing a report does not clear anything. The browser cannot verify that a copy exists. A PDF alone is not a complete or secure backup.</p>
+      <div class="reset-panel"><h3>Next appointment, fresh record</h3><p>Keep your profile and ongoing medications, including their original start dates and photos.</p><button type="button" id="start-new-record" class="secondary danger" disabled>Start new visit record</button><p class="help">A separate confirmation is required before irreversibly clearing events, completed courses, and photos used only by those courses.</p></div>
+      <p id="report-message" class="form-message" role="status" aria-live="polite"></p>
     </section>
+    <aside class="notice" aria-label="About this prototype"><strong>Your browser, your device</strong><p>Once storage is connected, records are stored in this browser on this device. Browser data can be cleared or lost. Records do not sync across devices.</p></aside>
   </main>
-  <footer>This prototype does not provide medical advice or verify medication identity.</footer>
+  <footer>CareTrail · A hackathon prototype<br>This prototype does not provide medical advice or verify medication identity.</footer>
+
+  <!-- ROLE 4: Clone templates, fill [data-field] via textContent, assign record IDs to
+       data-id and bind [data-action]. Give edit buttons record-specific accessible names.
+       Keep displayNumber stable. No template is a saved or demonstration record.
+       Enable disabled controls only after binding. File fields are UI-only, not stored
+       Medication fields. Populate #event-recorded-at from immutable createdAt.
+       #medication-incomplete: "Photo needed" / "Photo and name needed" / hidden.
+       Photo preview: set img src, unhide img, hide #photo-placeholder; clean object URLs.
+       Messages: #app-status and #{profile,event,medication,report}-message; use role=alert
+       for errors and retain entered data. Completion actions set status, reason and local
+       end date; all date fields remain editable. Reset and delete require dialog binding. -->
+  <template id="event-card-template">
+    <article class="event-card" data-id="">
+      <div class="card-top"><span class="status-badge" data-field="type">Other</span><span class="small">Patient-entered</span></div>
+      <h4 data-field="description">No details entered</h4>
+      <dl class="card-facts"><div><dt>When it happened</dt><dd data-field="occurredAt">Not entered</dd></div><div><dt>Recorded at</dt><dd data-field="createdAt">Not entered</dd></div></dl>
+      <p class="help" data-field="sortNote">Placed by recorded time</p>
+      <p data-field="medicationName" hidden></p><p data-field="doseNote" hidden></p>
+      <div class="actions"><button type="button" class="secondary card-edit" data-action="edit-event" disabled>Edit event</button><button type="button" class="secondary danger" data-action="delete-event" disabled>Delete…</button></div>
+    </article>
+  </template>
+  <template id="medication-card-template">
+    <article class="medication-card" data-id="" data-status="ongoing">
+      <div class="card-top"><span class="status-badge" data-field="status">Ongoing</span><span class="small" data-field="displayNumber">Medication number</span></div>
+      <div class="card-photo"><img data-field="photo" alt="" hidden><p class="photo-placeholder" data-field="photoPlaceholder">Photo and name needed</p></div>
+      <div class="card-body"><h4 data-field="name">Name not entered</h4><p class="incomplete-note" data-field="incomplete">Photo and name needed</p>
+        <dl class="card-facts"><div><dt>Started</dt><dd data-field="startedAt">Date not entered</dd></div><div data-field="completionDetails" hidden><dt data-field="completionReason">Completed</dt><dd data-field="endedAt">Date not entered</dd></div></dl>
+        <p data-field="doseText" hidden></p><button type="button" class="secondary card-edit" data-action="edit-medication" disabled>View / edit medication</button>
+      </div>
+    </article>
+  </template>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description"><h2 id="confirm-title">Confirm removal</h2><p id="confirm-description">This action cannot be undone.</p><div id="confirm-details"></div><div class="actions"><button id="confirm-cancel" type="button" class="secondary" disabled>Keep records</button><button id="confirm-accept" type="button" class="danger" disabled>Confirm removal</button></div></dialog>
 </body>
 </html>
