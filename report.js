@@ -90,6 +90,9 @@ function renderMedication(medication, photoUrls) {
 
   const details = element('div', 'report-medication-details');
   details.append(element('h3', '', medicationLabel(medication)));
+  if (!imageUrl) details.append(element('p', 'photo-unavailable-note', medication.photoId
+    ? 'Label photo unavailable.' : text(medication.name) ? 'Photo needed.' : 'Photo and name needed.'));
+  appendField(details, 'Status', medication.status === 'ongoing' ? 'Ongoing' : 'Completed');
   appendField(details, 'Dose details', medication.doseText);
   appendField(details, 'Start date', formatDate(medication.startedAt) || 'Date not entered');
   const isOngoing = medication.status === 'ongoing';
@@ -114,7 +117,10 @@ function renderEvent(event, medications) {
   item.append(element('h3', '', eventTypes[event.type] || 'Event'));
   appendField(item, 'Recorded at', formatDate(event.createdAt, true) || 'Date not entered');
   if (text(event.occurredAt)) appendField(item, 'Happened at', formatDate(event.occurredAt, true) || 'Date not entered');
-  else appendField(item, 'Happened at', 'Not entered');
+  else {
+    appendField(item, 'Happened at', 'Not entered');
+    item.append(element('p', 'report-field', 'Placed in the timeline by recorded time.'));
+  }
   if (text(event.description)) appendField(item, 'Description', event.description);
   else appendField(item, 'Description', 'No details entered.');
   if (text(event.medicationId)) {
@@ -135,18 +141,23 @@ export function renderReport({ profile = {}, events = [], medications = [], phot
   const patient = element('section', 'report-section');
   patient.append(element('h2', '', 'Patient profile'));
   appendField(patient, 'Name', profile.name);
+  appendField(patient, 'Date of birth', formatDate(profile.dateOfBirth));
   const age = ageAt(profile.dateOfBirth);
   appendField(patient, 'Age', age || 'Not entered');
-  if (text(profile.sex)) appendField(patient, 'Sex', profile.sex);
-  if (text(profile.bloodGroup)) appendField(patient, 'Blood group', profile.bloodGroup);
+  appendField(patient, 'Sex', profile.sex);
+  appendField(patient, 'Blood group', profile.bloodGroup);
   appendField(patient, 'Allergies', profile.allergies);
   appendField(patient, 'Additional details', profile.additionalInfo);
   report.append(patient);
 
   const medicationSection = element('section', 'report-section');
   medicationSection.append(element('h2', '', 'Medication courses'));
-  if (medications.length) medications.forEach((med) => medicationSection.append(renderMedication(med, photoUrls)));
-  else medicationSection.append(element('p', '', 'No medication courses entered.'));
+  for (const [status, heading] of [['ongoing', 'Ongoing medications'], ['completed', 'Completed medications']]) {
+    medicationSection.append(element('h3', '', heading));
+    const courses = medications.filter((med) => med.status === status);
+    if (courses.length) courses.forEach((med) => medicationSection.append(renderMedication(med, photoUrls)));
+    else medicationSection.append(element('p', '', 'No courses entered.'));
+  }
   report.append(medicationSection);
 
   const eventSection = element('section', 'report-section');
