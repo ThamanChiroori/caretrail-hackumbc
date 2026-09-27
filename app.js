@@ -53,7 +53,7 @@ function medicationLabel(med) {
 }
 
 function incomplete(med) {
-  if (!med.photoId) return med.name.trim() ? 'Photo needed' : 'Photo and name needed';
+  if (!med.photoId) return med.name.trim() ? 'Photo not added' : 'Photo or name needed';
   if (!photoUrls[med.photoId]) return med.name.trim() ? 'Photo unavailable — add or replace photo' : 'Photo unavailable; name not entered';
   return med.name.trim() ? '' : 'Name not entered';
 }
@@ -282,7 +282,7 @@ function updatePreview() {
   $('retake-photo').hidden = !src;
   $('replace-photo').hidden = !src;
   const name = value(medicationForm, 'name');
-  const note = !selectedPhoto && !photoId ? (name ? 'Photo needed' : 'Photo and name needed')
+  const note = !selectedPhoto && !photoId ? (name ? 'Photo not added' : 'Photo or name needed')
     : !src ? 'Photo unavailable — add or replace photo' : !name ? 'Name not entered' : '';
   $('medication-incomplete').hidden = !note;
   $('medication-incomplete').textContent = note;
@@ -358,6 +358,11 @@ eventForm.addEventListener('submit', (event) => {
 
 medicationForm.addEventListener('submit', (event) => {
   event.preventDefault();
+  if (!value(medicationForm, 'name') && !selectedPhoto && !value(medicationForm, 'photoId')) {
+    message('medication-message', 'Add a label photo or enter a medication name to save.', true);
+    $('medication-name').focus();
+    return;
+  }
   const id = value(medicationForm, 'id');
   const completed = value(medicationForm, 'status') === 'completed';
   if (completed && !value(medicationForm, 'completionReason')) {
@@ -403,7 +408,7 @@ $('add-photo-later').addEventListener('click', () => {
   clearSelection();
   // Keep an existing saved photo; abandon only a pending replacement.
   updatePreview();
-  message('medication-message', value(medicationForm, 'photoId') ? 'Existing photo kept.' : 'Photo needed. You can save now and add a photo later.');
+  message('medication-message', value(medicationForm, 'photoId') ? 'Existing photo kept.' : 'Enter a name or nickname to save without a photo. You can add a photo later.');
   $('medication-name').focus();
 });
 $('starting-today').addEventListener('click', () => { $('medication-start').value = localDate(); });

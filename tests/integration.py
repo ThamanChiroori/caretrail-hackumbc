@@ -105,10 +105,11 @@ def main():
 
             page.locator('#add-medication').click()
             page.locator('#add-photo-later').click()
+            page.locator('#medication-name').fill('Fictional course B')
             saved('medication')
             second = records()['medications'][1]
-            assert second['startedAt'] is None and second['name'] == '' and second['photoId'] is None
-            expect(page.locator(f'[data-id="{second["id"]}"]')).to_contain_text('Photo and name needed')
+            assert second['startedAt'] is None and second['name'] == 'Fictional course B' and second['photoId'] is None
+            expect(page.locator(f'[data-id="{second["id"]}"]')).to_contain_text('Photo not added')
             edit_med(second)
             page.locator('#medication-name').fill('Fictional course B')
             page.locator('#medication-photo').set_input_files(photo)
