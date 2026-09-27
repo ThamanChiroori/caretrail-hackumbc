@@ -207,12 +207,14 @@ async function run(messageId, action, success, retryCleanup = null) {
     await action();
     committed = true;
     printAttempted = false;
+    $('start-new-record').hidden = true;
     await refresh();
     message(messageId, [success, photoWarning].filter(Boolean).join(' '), !!photoWarning);
     message('app-status', [success, photoWarning].filter(Boolean).join(' '), !!photoWarning);
   } catch (error) {
     if (error.recordsSaved) {
       printAttempted = false;
+      $('start-new-record').hidden = true;
       try { await refresh(); } catch { /* Keep the original cleanup error visible. */ }
     }
     const text = committed ? `Changes were saved, but the display could not reload. Reload the page before continuing. ${error.message}` : error.message || 'Could not save. Your entered details are still here. Try again.';
@@ -435,7 +437,11 @@ async function prepareReport(print = false) {
     location.hash = 'report-view';
     showScreen();
     await Promise.all([...$('report-content').querySelectorAll('img')].map((img) => img.decode().catch(() => {})));
-    if (print) { printReport(); printAttempted = true; }
+    if (print) {
+      printReport();
+      printAttempted = true;
+      $('start-new-record').hidden = false;
+    }
     message('report-message', [print ? 'Check that your printed or saved copy exists before starting a new visit record.' : 'Report updated from saved records.', photoWarning].filter(Boolean).join(' '), !!photoWarning);
   } catch (error) { message('report-message', error.message || 'Report could not be prepared. Try again.', true); }
   finally { busy = false; }
