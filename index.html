@@ -120,7 +120,7 @@
         <div id="medication-list" class="card-list" aria-label="Ongoing medications">
           <div class="empty-state">
             <h4>No ongoing medications</h4>
-            <p>Add a label photo to get started. If the bottle is unavailable, you can add the photo later.</p>
+            <p>Add a label photo or enter a name or nickname to get started. A name is needed to save without a photo.</p>
           </div>
         </div>
       </section>
@@ -166,13 +166,13 @@
             <button type="button" id="retake-photo" class="secondary" hidden>Retake photo</button>
             <button type="button" id="replace-photo" class="secondary" hidden>Replace photo</button>
           </div>
-          <p id="medication-incomplete" class="incomplete-note">Photo and name needed. You can add missing details later.</p>
+          <p id="medication-incomplete" class="incomplete-note">Add a label photo or enter a name or nickname to save. You can include both.</p>
           <p class="help">CareTrail stores the label photo on this device for you to view. It does not read or understand the label, or identify the medication.</p>
         </fieldset>
 
         <fieldset>
           <legend>Medication details</legend>
-          <label for="medication-name">Name or familiar nickname <span>(optional)</span></label>
+          <label for="medication-name">Name or familiar nickname <span>(needed without a photo)</span></label>
           <input id="medication-name" name="name" type="text" autocomplete="off" enterkeyhint="done">
           <label for="medication-dose">Dose details <span>(optional)</span></label>
           <input id="medication-dose" name="doseText" type="text" autocomplete="off" enterkeyhint="done">
@@ -361,7 +361,7 @@
        File fields are UI-only, not stored Medication fields. Populate #event-recorded-at
        from immutable createdAt. Views: #profile-view, #events-view, #medications-view,
        #report-view. #medication-list is the ongoing card list; #completed-medications
-       is the completed list. #medication-incomplete: "Photo needed" / "Photo and name
+       is the completed list. #medication-incomplete: "Photo not added" / "Photo or name
        needed" / hidden. Photo preview: set img src, unhide img, hide #photo-placeholder;
        unhide #retake-photo and #replace-photo when a photo is loaded; clean object URLs.
        Messages: #app-status and #{profile,event,medication,report}-message; use role=alert
@@ -387,8 +387,8 @@
   <template id="medication-card-template">
     <article class="medication-card" data-id="" data-status="ongoing">
       <div class="card-top"><span class="status-badge" data-field="status">Ongoing</span><span class="small" data-field="displayNumber">Medication number</span><span class="chevron" aria-hidden="true">›</span></div>
-      <div class="card-photo"><img data-field="photo" alt="" hidden><p class="photo-placeholder" data-field="photoPlaceholder">Photo and name needed</p></div>
-      <div class="card-body"><h4 data-field="name">Name not entered</h4><p class="incomplete-note" data-field="incomplete">Photo and name needed</p>
+      <div class="card-photo"><img data-field="photo" alt="" hidden><p class="photo-placeholder" data-field="photoPlaceholder">Photo or name needed</p></div>
+      <div class="card-body"><h4 data-field="name">Name not entered</h4><p class="incomplete-note" data-field="incomplete">Photo or name needed</p>
         <dl class="card-facts"><div><dt>Started</dt><dd data-field="startedAt">Date not entered</dd></div><div data-field="completionDetails" hidden><dt data-field="completionReason">Completed</dt><dd data-field="endedAt">Date not entered</dd></div></dl>
         <p data-field="doseText" hidden></p><button type="button" class="secondary card-edit" data-action="edit-medication">View / edit medication</button>
       </div>
