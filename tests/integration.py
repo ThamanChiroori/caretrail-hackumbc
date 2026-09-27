@@ -226,13 +226,14 @@ def main():
             assert report.locator('img').count() == 3
             assert report.locator('img[src="x"]').count() == 0
             before_print = records()
-            page.locator('#start-new-record').click()
-            expect(page.locator('#report-message')).to_contain_text('Print / Save report first')
+            expect(page.locator('#start-new-record')).to_be_hidden()
+            expect(page.locator('#start-new-record')).to_have_attribute('hidden', '')
             # Verify the real print entry point calls window.print without deleting.
             page.evaluate('() => { window.print = () => { window.printCalls = (window.printCalls || 0) + 1; }; }')
             page.locator('#print-report').click()
             expect(page.locator('#report-message')).to_contain_text('Check that your printed')
             assert page.evaluate('window.printCalls') == 1
+            expect(page.locator('#start-new-record')).to_be_visible()
             assert records() == before_print
             page.emulate_media(media='print')
             assert page.locator('nav').is_hidden()
@@ -242,6 +243,37 @@ def main():
             page.emulate_media(media='screen')
             page.screenshot(path=str(artifacts / 'report-mobile.png'), full_page=True)
             print('PASS clinician report, print invocation, print CSS, PDF generation, no print deletion')
+
+            # Each successful saved change requires printing the updated report.
+            for kind, screen, selector, updated in [
+                ('profile', 'profile', '#profile-allergies', 'Unknown — fictional update'),
+                ('event', 'events', '#event-description', 'Fictional updated event'),
+                ('medication', 'medications', '#medication-dose', 'Fictional updated course note'),
+            ]:
+                nav(screen)
+                if kind == 'event':
+                    edit_event(blank_event)
+                elif kind == 'medication':
+                    edit_med(second)
+                page.locator(selector).fill(updated)
+                saved(kind)
+                nav('report')
+                expect(page.locator('#start-new-record')).to_be_hidden()
+                page.locator('#print-report').click()
+                expect(page.locator('#start-new-record')).to_be_visible()
+            assert page.evaluate('window.printCalls') == 4
+
+            # A new load must hide the button even after a previous print attempt.
+            page.reload()
+            expect(page.locator('#app-status')).to_contain_text('Ready.')
+            expect(page.locator('#report-view')).to_be_visible()
+            expect(page.locator('#start-new-record')).to_be_hidden()
+            page.evaluate('() => { window.print = () => { window.printCalls = 1; }; }')
+            page.locator('#print-report').click()
+            expect(page.locator('#start-new-record')).to_be_visible()
+            assert page.evaluate('window.printCalls') == 1
+            before_print = records()
+            print('PASS reset hidden before print, visible after print, hidden after each saved change and reload')
 
             page.locator('#start-new-record').click()
             expect(page.locator('#confirm-accept')).to_be_disabled()
