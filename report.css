@@ -1,0 +1,54 @@
+.clinician-report {
+  color: #172c27;
+  background: #fff;
+  font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-wrap: anywhere;
+}
+.clinician-report h2 { margin: 1.25rem 0 .55rem; font-size: 1.3rem; }
+.clinician-report h3 { margin: 0 0 .45rem; font-size: 1.05rem; }
+.report-created { margin: 0; color: #344b44; font-size: .9rem; }
+.report-section { margin-top: 1.2rem; }
+.report-field { margin: .2rem 0; white-space: pre-wrap; }
+.report-medication, .report-event {
+  margin: .75rem 0;
+  padding: .8rem;
+  border: 1px solid #aebdb6;
+  border-radius: .5rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.report-medication { display: flex; align-items: flex-start; gap: 1rem; }
+.report-medication-photo {
+  display: block;
+  width: min(11rem, 38%);
+  height: 9rem;
+  flex: 0 0 min(11rem, 38%);
+  object-fit: contain;
+  background: #f4f6f5;
+  border: 1px solid #d0d9d5;
+}
+.report-medication-details { min-width: 0; flex: 1; }
+.photo-unavailable-note { margin: 0 0 .4rem; font-style: italic; }
+.report-disclaimer { margin-top: 1.5rem; padding-top: .65rem; border-top: 1px solid #75877f; font-weight: 700; }
+
+@media (max-width: 34rem) {
+  .report-medication { gap: .65rem; padding: .65rem; }
+  .report-medication-photo { width: 34%; height: 7.5rem; flex-basis: 34%; }
+}
+
+@media print {
+  @page { margin: 16mm 14mm; }
+  html, body { background: #fff !important; color: #111 !important; }
+  body { margin: 0; font-size: 10.5pt; }
+  body * { visibility: hidden !important; }
+  #report, #report * { visibility: visible !important; }
+  body > .app-header, body > footer, nav, form, button, .skip-link,
+  #app-status, .notice, #report > h2, #report > p:not(#report-content *) { display: none !important; }
+  #report { display: block !important; position: absolute; inset: 0; width: 100%; margin: 0; }
+  #report-content { display: block !important; padding: 0; border: 0; border-radius: 0; }
+  .clinician-report { font-size: 10.5pt; }
+  .clinician-report h2 { margin-top: 1rem; font-size: 14pt; }
+  .report-medication, .report-event { break-inside: avoid; page-break-inside: avoid; }
+  .report-medication-photo { width: 38mm; height: 34mm; flex-basis: 38mm; }
+  .report-field, .report-disclaimer { color: #111 !important; }
+}
